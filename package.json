@@ -1,6 +1,6 @@
 {
   "name": "vsts-securityscanner",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Custom task for scanning the GIT repositories on VSTS",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,5 @@
   "bugs": {
     "url": "https://github.com/vanbastelaerej/vsts-securityscanner/issues"
   },
-  "homepage": "https://github.com/vanbastelaerej/vsts-securityscanner#readme",
-  "dependencies": {
-    "vsts-task-lib": "^2.3.0"
-  },
-  "devDependencies": {
-    "@types/node": "^9.4.6",
-    "@types/q": "^1.0.7"
-  }
+  "homepage": "https://github.com/vanbastelaerej/vsts-securityscanner#readme"
 }
