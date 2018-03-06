@@ -1,17 +1,27 @@
 {
-    "id": "f8aa0dcb-6eb7-4b71-8cfc-f657433dc2b4",
+    "id": "cdb1f86d-7c83-4398-842d-b8b07941057f",
     "name": "gitscanner",
     "friendlyName": "GIT Scanner",
-    "description": "This task scans GIT repos for potential secrets.",
-    "helpMarkDown": "https://github.com/vanbastelaerej/vsts-securityscanner#readme",
-    "category": "Utility",
+    "description": "Scan for secrets committed to GIT repositories",
+    "helpMarkDown": "[More Information](https://github.com/vanbastelaerej/vsts-securityscanner)",
+    "category": "Deploy",
+    "visibility": [
+        "Build",
+        "Release"
+    ],
+    "runsOn": [
+        "Agent",
+        "DeploymentGroup"
+    ],
     "author": "Jeroen Van Bastelaere",
     "version": {
         "Major": 0,
         "Minor": 1,
         "Patch": 0
     },
-    "instanceNameFormat": "Echo $(samplestring)",
+    "demands": [],
+    "minimumAgentVersion": "2.102.0",
+    "instanceNameFormat": "Scan for secrets",
     "groups": [
         {
             "name": "advanced",
@@ -21,34 +31,67 @@
     ],
     "inputs": [
         {
-            "name": "samplepathinput",
-            "type": "filePath",
-            "label": "Sample Path",
+            "name": "sshEndpoint",
+            "type": "connectedService:ssh",
+            "label": "SSH endpoint",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "A sample path which is relative to root of repo if empty"
+            "helpMarkDown": "SSH endpoint with connection details for the remote machine."
         },
         {
-            "name": "samplestring",
-            "type": "string",
-            "label": "Sample String",
-            "defaultValue": "",
-            "required": false,
-            "helpMarkDown": "A sample string"
+            "name": "runOptions",
+            "type": "radio",
+            "label": "Run",
+            "required": true,
+            "defaultValue": "lastcommit",
+            "options": {
+                "full": "Full scan",
+                "lastcommit": "Last Commit"
+            },
+            "helpMarkDown": "Choose to whether do a full scan of all commits or only since last commit."
         },
         {
-            "name": "samplebool",
+            "name": "entropyScan",
             "type": "boolean",
-            "label": "Sample Boolean",
-            "defaultValue": "false",
+            "label": "Run high entropy scan",
             "required": false,
-            "helpMarkDown": "If this is true, this task will fail if any errors are written to the StandardError stream.",
+            "defaultValue": false,
+            "helpMarkDown": "If this option is selected, the task will also scan for high entropy values. This type of scan runs slower",
+            "groupName": "advanced"
+        },
+        {
+            "name": "regexScan",
+            "type": "boolean",
+            "label": "Run a regular expression scan",
+            "required": false,
+            "defaultValue": true,
+            "helpMarkDown": "If this option is selected, the task will scan for known regular expressions.",
+            "groupName": "advanced"
+        },
+        {
+            "name": "failOnStdErr",
+            "type": "boolean",
+            "label": "Fail on STDERR",
+            "required": false,
+            "defaultValue": true,
+            "helpMarkDown": "If this option is selected, the build will fail when the remote commands or script write to STDERR.",
             "groupName": "advanced"
         }
     ],
     "execution": {
         "Node": {
-            "target": "index.js"
+            "target": "gitscanner.js",
+            "argumentFormat": ""
         }
+    },
+    "messages": {
+        "UseDefaultPort": "Using port 22 which is the default for SSH since no port was specified.",
+        "SettingUpSshConnection": "Trying to setup SSH connection to %s@%s:%s",
+        "SshConnectionSuccessful": "Successfully connected.",
+        "ConnectionFailed": "Failed to connect to remote machine. Verify the SSH endpoint details. Error: %s.",
+        "RemoteCopyFailed": "Failed to copy script to remote machine. Error: %s.",
+        "RemoteCmdExecutionErr": "Command failed with errors on remote machine.",
+        "RemoteCmdNonZeroExitCode": "Command %s exited with code %s.",
+        "RemoteScriptFileCleanUpFailed": "Failed to delete the script file copied to the remote machine. Error = %s."
     }
 }

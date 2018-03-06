@@ -1,10 +1,11 @@
 import tl = require('vsts-task-lib/task');
 import Q = require('q');
+
 var Ssh2Client = require('ssh2').Client;
 var Scp2Client = require('scp2');
 
 export class RemoteCommandOptions {
-    public failOnStdErr : boolean;
+    public failOnStdErr : boolean = false;
 }
 
 /**
@@ -16,7 +17,7 @@ export class RemoteCommandOptions {
 export function copyScriptToRemoteMachine(scriptFile : string, scpConfig : any) : Q.Promise<string> {
     var defer = Q.defer<string>();
 
-    Scp2Client.scp(scriptFile, scpConfig, (err) => {
+    Scp2Client.scp(scriptFile, scpConfig, (err: any) => {
         if (err) {
             defer.reject(tl.loc('RemoteCopyFailed', err));
         } else {
@@ -38,7 +39,7 @@ export function setupSshClientConnection(sshConfig: any) : Q.Promise<any> {
     var client = new Ssh2Client();
     client.on('ready', () => {
         defer.resolve(client);
-    }).on('error', (err) => {
+    }).on('error', (err: any) => {
         defer.reject(err);
     }).connect(sshConfig);
     return defer.promise;
@@ -68,11 +69,11 @@ export function runCommandOnRemoteMachine(command: string, sshClient: any, optio
     }
     tl.debug('cmdToRun = ' + cmdToRun);
 
-    sshClient.exec(cmdToRun, (err, stream) => {
+    sshClient.exec(cmdToRun, (err: any, stream: any) => {
         if(err) {
             defer.reject(tl.loc('RemoteCmdExecutionErr', err))
         }
-        stream.on('close', (code, signal) => {
+        stream.on('close', (code: any, signal: any) => {
             tl.debug('code = ' + code + ', signal = ' + signal);
 
             //based on the options decide whether to fail the build or not if data was written to STDERR
@@ -84,9 +85,10 @@ export function runCommandOnRemoteMachine(command: string, sshClient: any, optio
                 //success case - code is undefined or code is 0
                 defer.resolve('0');
             }
-        }).on('data', (data) => {
-            tl._writeLine(data);
-        }).stderr.on('data', (data) => {
+        }).on('data', (data: any) => {
+            // tl._writeLine(data);
+            console.log(data);            
+        }).stderr.on('data', (data: any) => {
             stdErrWritten = true;
             tl.debug('stderr = ' + data);
             if(data && data.toString().trim() !== '') {

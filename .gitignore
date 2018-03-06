@@ -1,3 +1,6 @@
+*.js
+.taskkey
+
 # Logs
 logs
 *.log
