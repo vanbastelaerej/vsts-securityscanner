@@ -1,0 +1,61 @@
+{
+  "manifestVersion": 1,
+  "id": "vstssecurityscanner",
+  "name": "VSTS Security Scanner",
+  "version": "1.0.0",
+  "publisher": "jeroen-van-bastelaere",
+  "tags": [
+    "VSTS",
+    "Security",
+    "GIT",
+    "Scanner"
+  ],
+  "content": {
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "public": true,
+  "links": {
+    "getstarted": {
+      "uri": "https://github.com/vanbastelaerej/vsts-securityscanner"
+    },
+    "support": {
+      "uri": "https://github.com/vanbastelaerej/vsts-securityscanner/issues"
+    }
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "description": "VSTS Security Scanner",
+  "categories": [
+    "Build and release"
+  ],
+  "icons": {
+    "default": "images/icon.png"
+  },
+  "files": [
+    {
+      "path": "gitscanner"
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ],
+
+  "contributions": [
+    {
+      "id": "gitscanner",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "gitscanner"
+      }
+    }
+  ]
+}
